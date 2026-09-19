@@ -1,10 +1,10 @@
 # LangChain Without the Headache: A Simplified First Agent
 
-*LangChain's own docs cover a lot of ground — this guide covers just enough to get a working agent running, nothing more.*
+*LangChain's own docs cover a lot of ground — this guide covers just enough to get a working agent running.*
 
 ## Why this guide exists
 
-LangChain is one of the most widely used frameworks for building with LLMs, but its documentation has a well-earned reputation among developers for being sprawling — the library moves fast, and older tutorials floating around the internet often show syntax that's already outdated. This guide sticks to the current, minimal path: one working agent, in about 10 minutes, with nothing extra.
+LangChain is one of the most widely used frameworks for building with LLMs, but its documentation has a well-earned reputation among developers for being sprawling — the library moves fast, and older tutorials floating around the internet often show syntax that's outdated. This guide sticks to the current, minimal path: one working agent, in about 10 minutes, with minimal effort.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ export ANTHROPIC_API_KEY="your-key-here"
 
 ## Step 2: Build your first agent
 
-LangChain's current recommended entry point is `create_agent` — it wraps the model, a set of tools, and the agent loop into one call, instead of assembling those pieces manually.
+LangChain's current recommended entry point is `create_agent`. It wraps the model, a set of tools, and the agent loop into one call, instead of assembling those pieces manually.
 
 ```python
 from langchain.agents import create_agent
@@ -56,7 +56,7 @@ Run this file, and the agent will call `get_weather` on its own and respond with
 
 ## Step 3: The other core pattern — a simple chain
 
-Not everything needs to be an agent. For a single-purpose task (like translating text or summarizing something), LangChain's "LCEL" pattern — piping components together with `|` — is the simpler building block worth knowing:
+Not everything needs to be an agent. For a single-purpose task (like translating text or summarizing something), LangChain's "LCEL" pattern, that pipes components together with `|`, is the simpler building block:
 
 ```python
 from langchain_anthropic import ChatAnthropic
@@ -79,11 +79,11 @@ Read this left to right: the prompt gets filled in, passed to the model, and the
 
 ## Common pitfalls
 
-1. **Mismatched provider installs.** `pip install langchain` alone doesn't include a specific model provider — you need the extra, like `langchain[anthropic]` or the separate `langchain-anthropic` package, matching whichever model you're actually calling.
+1. **Mismatched provider installs.** `pip install langchain` alone doesn't include a specific model provider. You need the extra, like `langchain[anthropic]` or the separate `langchain-anthropic` package, matching whichever model you're actually calling.
 2. **Copying code from older tutorials.** LangChain has gone through several API redesigns. If a blog post's syntax looks meaningfully different from what's here, check its publish date before assuming it's still current.
-3. **Wrong or missing environment variable name.** Each provider expects its own variable (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, etc.) — a silent auth failure is often just the wrong variable name.
-4. **Assuming you need LangGraph on day one.** LangGraph (a related, more advanced library for complex multi-step agent workflows) is often mentioned alongside LangChain, but it's not required to get a basic agent like this one running.
+3. **Wrong or missing environment variable name.** Each provider expects its own variable (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, etc.) — a common auth failure is often just the wrong variable name.
+4. **Assuming you need LangGraph on day one.** In short, you don't. LangGraph (a related, more advanced library for complex multi-step agent workflows) is often mentioned alongside LangChain, but it's not required to get a basic agent like this one running.
 
 ## Next steps
 
-Once this pattern feels comfortable, the natural next additions are giving your agent more than one tool, adding memory so it remembers earlier turns in a conversation, and — only once you actually need multi-step branching logic — looking at LangGraph.
+Once this pattern feels comfortable, the natural next additions are giving your agent more than one tool, adding memory so it remembers earlier turns in a conversation, and, only once you actually need multi-step branching logic, looking at LangGraph.
