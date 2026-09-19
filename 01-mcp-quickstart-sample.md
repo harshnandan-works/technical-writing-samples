@@ -4,9 +4,9 @@
 
 ## What is MCP and why it matters
 
-The Model Context Protocol (MCP) is an open standard for connecting AI models to external tools and data sources — things like your notes, a database, or a custom API — without writing one-off integration code for every single connection.
+The Model Context Protocol (MCP) is an open standard for connecting AI models to external tools and data sources (things like your notes, a database, or a custom API) without writing one-off integration code for every single connection.
 
-Before MCP, giving Claude access to, say, your file system or a search tool meant custom glue code specific to that one integration. MCP standardizes this: build one MCP server, and any MCP-compatible client (Claude Desktop, Claude Code, and others) can use it the same way.
+Before MCP, giving Claude access to, say, your file system or a search tool meant manually gluing code specific to that one integration. MCP standardizes this: build one MCP server, and any MCP-compatible client (Claude Desktop, Claude Code, and others) can use it the same way.
 
 By the end of this guide, you'll have a working local MCP server exposing one simple tool, connected to Claude Desktop and ready to test. Real first-timers report this taking about 30 minutes once you know the steps — this guide exists so you skip the trial and error.
 
@@ -14,10 +14,11 @@ By the end of this guide, you'll have a working local MCP server exposing one si
 
 Before you start, make sure you have:
 
-- **Python 3.11 or higher** installed (`python --version` to check)
+- **Python 3.11 or higher** installed (Run `python --version` in your environment to check)
 - **Claude Desktop** installed and signed in
 - A terminal and a text editor
-- No prior MCP experience needed — this guide assumes zero background beyond basic Python
+
+That's it! No prior MCP experience needed. This guide assumes zero background beyond basic Python
 
 We'll use **FastMCP**, a Python library that handles the protocol details for you so you can focus on what your tool actually does.
 
@@ -30,8 +31,6 @@ mkdir my-first-mcp-server
 cd my-first-mcp-server
 pip install fastmcp
 ```
-
-That's the entire setup step — no build tools, no config files yet.
 
 ## Step 2: Define your first tool
 
@@ -65,7 +64,7 @@ if __name__ == "__main__":
     mcp.run()
 ```
 
-A few things worth noticing here: the `@mcp.tool` decorator is doing most of the work — it reads your function's type hints and docstring to automatically build the tool description Claude sees. Write a clear docstring; it's not just a comment, it's documentation Claude actually reads to decide when to use your tool.
+A few things worth noticing here: the `@mcp.tool` decorator is doing most of the work — it reads your function's type hints and docstring to automatically build the tool description Claude sees. Also writing a clear docstring is quite useful and important; it's not just a comment for user understanding, it's documentation Claude actually reads to decide when to use your tool.
 
 ## Step 3: Connect it to Claude Desktop
 
@@ -88,13 +87,13 @@ If the file doesn't exist yet, create it with `{"mcpServers": {}}` as a starting
 }
 ```
 
-**Use the full absolute path** to `server.py` — a relative path is one of the most common reasons this silently fails.
+**Always use the full absolute path** to `server.py`.
 
 ## Step 4: Test it end-to-end
 
-**Fully quit and reopen Claude Desktop** (not just closing the window — MCP servers are only loaded on startup).
+**Fully quit and reopen Claude Desktop** (not just closing the window, since MCP servers are only loaded on startup).
 
-Once it's back open, look for a small tool/hammer icon in the chat interface — that's your signal MCP servers are connected. Then just ask Claude something naturally:
+Once it's back open, look for a small tool/hammer icon in the chat interface. That's your signal MCP servers are connected. Then just ask Claude something naturally:
 
 > "Can you search my notes for anything about MCP?"
 
@@ -107,9 +106,9 @@ A few things that trip up almost everyone on their first server:
 1. **Using `print()` for debugging.** MCP over stdio uses standard output to send protocol messages — a stray `print()` statement corrupts that stream and breaks the connection. Use Python's `logging` module configured to write to stderr instead (as shown in Step 2).
 2. **Forgetting the full restart.** Editing the config file while Claude Desktop is still running does nothing until you quit and relaunch it completely.
 3. **Relative paths in the config file.** Always use the absolute path to your script — Claude Desktop doesn't run from your project folder, so relative paths resolve incorrectly.
-4. **Invalid JSON in the config file.** A single trailing comma or missing bracket will silently prevent *every* server in the file from loading, not just the broken entry. Validate your JSON before restarting.
+4. **Invalid JSON in the config file.** A single trailing comma or missing bracket will prevent *every* server in the file from loading, not just the broken entry. Validate your JSON before restarting.
 5. **Thin docstrings.** Since FastMCP builds the tool's description from your docstring, a vague one ("does stuff") makes it harder for Claude to know when to actually use your tool.
 
 ## Next steps
 
-You've built a server with one tool — MCP also supports **resources** (read-only data Claude can reference) and **prompts** (reusable templates), both worth exploring once this basic loop feels comfortable. From here, a natural next step is connecting a tool to something real — an actual database, a file system, or an API — instead of the hardcoded list used in this guide.
+You've built a server with one tool, but MCP also supports **resources** (read-only data Claude can reference) and **prompts** (reusable templates), both worth exploring once this basic loop feels comfortable. From here on, a natural next step is connecting a tool to something real, like an actual database, a file system, or an API, instead of the hardcoded list used in this guide.
